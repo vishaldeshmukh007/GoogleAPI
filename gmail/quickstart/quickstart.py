@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # [START gmail_quickstart]
-from __future__ import print_function
+#from __future__ import print_function
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -22,6 +22,10 @@ from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+
+
+
+
 
 def main():
     """Shows basic usage of the Gmail API.
@@ -49,15 +53,58 @@ def main():
     service = build('gmail', 'v1', credentials=creds)
 
     # Call the Gmail API
-    results = service.users().labels().list(userId='me').execute()
-    labels = results.get('labels', [])
+ #  printLabels(service.users().labels())
+    printMessage(service.users().messages())
 
+
+def printLabels(labels):
+    results = labels.list(userId='me').execute()
+    labels = results.get('labels', [])
     if not labels:
         print('No labels found.')
     else:
         print('Labels:')
         for label in labels:
             print(label['name'])
+
+
+def isSubject(self):
+    if self.get('name').lower() == 'from' and 'magnemit'.lower() in self.get('value').lower():
+        return True
+    else:
+        return False
+
+
+
+def printMessage(param):
+    results = param.list(userId='me').execute()
+    messages = results.get('messages',[])
+    getParticularMessages(messages, param)
+
+
+def showMessageInfo(messageId, content):
+    content.get('payload')
+
+
+def getParticularMessages(messages, param):
+    expediaMessages = []
+    if not messages:
+        print("No messages found")
+    else:
+        for i in range(1):
+            message = messages[i]
+            messageId = message.get('id')
+            content = param.get(userId='me', id=messageId).execute()
+            headers = content.get('payload').get('headers')
+            countS = list(filter(isSubject, headers)).__len__()
+            result = countS
+            if result == 1:
+                expediaMessages.append(messageId)
+                showMessageInfo(messageId,content)
+
+    for messageId in expediaMessages:
+        print(messageId)
+
 
 if __name__ == '__main__':
     main()
