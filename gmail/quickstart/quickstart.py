@@ -91,7 +91,7 @@ def getParticularMessages(messages, param):
     if not messages:
         print("No messages found")
     else:
-        for i in range(1):
+        for i in range(len(messages)):
             message = messages[i]
             messageId = message.get('id')
             content = param.get(userId='me', id=messageId).execute()
